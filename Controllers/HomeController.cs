@@ -1,11 +1,10 @@
 ﻿using BridgeMonitor.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace BridgeMonitor.Controllers
 {
@@ -23,6 +22,22 @@ namespace BridgeMonitor.Controllers
             return View();
         }
 
+        public IActionResult SoonClosing()
+        {
+            var hours = GetClosingHoursListFromApi();
+            return View(hours);
+        }
+
+        public IActionResult AllClosing()
+        {
+            return View();
+        }
+
+        public IActionResult ClosingDetails()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -32,6 +47,14 @@ namespace BridgeMonitor.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        private static readonly HttpClient client = new HttpClient();
+        private static List<Hours> GetClosingHoursListFromApi()
+        {
+            var stringTask = client.GetStringAsync("https://api.alexandredubois.com/pont-chaban/api.php");
+            var MyJsonRes = stringTask.Result;
+            var result = JsonConvert.DeserializeObject<List<Hours>>(MyJsonRes);
+            return result;
         }
     }
 }
