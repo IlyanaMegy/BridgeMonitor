@@ -1,7 +1,35 @@
 ﻿
 @{
     ViewData["Title"] = "SoonClosing";
+
+    string[] NextOne = new string[4];
+    @foreach (var hours in Model) //pour chaque entrée
+    {
+        int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est aujourd'hui ou dans les jours qui suivent
+        @if (res == 0 || res > 0)
+        {
+            NextOne[0] = hours.ClosingType; //fermeture [type]
+            NextOne[1] = hours.ClosingDate.DayOfTheWeek; // le [jour de la semaine] prochain
+            
+            string duree = hours.ClosingDate.Hour + "h" + hours.ClosingDate.Minute + " à " + hours.ReopeningDate.Hour + "h" + hours.ReopeningDate.Minute;
+            NextOne[2] = duree; // de [h/min] à [h/min]
+
+            NextOne[4] = hours.BoatName; // à cause de [name]
+            NextOne[5] = hours.ClosingDate; //dans exactement compteur
+
+            break;
+        }
+    }
 }
 
-<h1>Fermetures prochaines...</h1>
+<h1 style="margin-left:13%;">Fermeture prochaine...</h1>
 
+var time =
+<div style="border-radius:5%; border: solid, 1px, double; border-color:aquamarine; height: 500px; width:900px; margin:50px; margin-left:13%; margin-right:auto; background-color:lightcyan;">
+    <h2 style="text-align:center;">Le pont Chaban Delmas sera en fermeture [bool] [...] prochain
+    <br>de [debut] à [fin], à cause de ce putin de [nom]
+    <br>soit pendant environ [heure] heures et [min] minutes</h2>
+    <hr style="margin:30px;"/>
+    <h2>Cette fermeture aura lieu dans [Décompte], le risque d'embouteillage est [bool].</h2>
+    
+</div>
