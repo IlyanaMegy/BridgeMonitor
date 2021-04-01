@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 
 namespace BridgeMonitor.Controllers
@@ -30,7 +33,8 @@ namespace BridgeMonitor.Controllers
 
         public IActionResult AllClosing()
         {
-            return View();
+            var hours = GetClosingHoursListFromApi();
+            return View(hours);
         }
 
         public IActionResult ClosingDetails()
@@ -54,7 +58,9 @@ namespace BridgeMonitor.Controllers
             var stringTask = client.GetStringAsync("https://api.alexandredubois.com/pont-chaban/api.php");
             var MyJsonRes = stringTask.Result;
             var result = JsonConvert.DeserializeObject<List<Hours>>(MyJsonRes);
-            return result;
+            List<Hours> SortedList = result.OrderBy(o => o.ClosingDate).ToList();
+            return SortedList;
+
         }
     }
 }

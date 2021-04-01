@@ -1,5 +1,132 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "SoonClosing";
 }
+<style type="text/css">
+    .tg {
+        border-collapse: collapse;
+        border-color: #aabcfe;
+        border-spacing: 0;
+    }
+
+        .tg td {
+            background-color: #e8edff;
+            border-color: #aabcfe;
+            border-style: solid;
+            border-width: 1px;
+            color: #669;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            overflow: hidden;
+            padding: 10px 14px;
+            word-break: normal;
+        }
+
+        .tg th {
+            background-color: #b9c9fe;
+            border-color: #aabcfe;
+            border-style: solid;
+            border-width: 1px;
+            color: #039;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 10px 14px;
+            word-break: normal;
+        }
+
+        .tg .tg-y191 {
+            color: #666699;
+            text-align: center;
+            vertical-align: top
+        }
+
+        .tg .tg-baqh {
+            text-align: center;
+            vertical-align: top
+        }
+
+        .tg .tg-rz9m {
+            position: -webkit-sticky;
+            position: sticky;
+            text-align: center;
+            top: -1px;
+            vertical-align: top;
+            will-change: transform
+        }
+</style>
+
+<h1>Toutes les fermetures connues à ce jour..</h1>
+<h2>Liste des fermetures en cours :</h2>
+<hr style=" margin:30px;" />
+
+<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 13%;">
+    <colgroup>
+        <col style="width: 233px">
+        <col style="width: 216px">
+        <col style="width: 205px">
+        <col style="width: 205px">
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th class="tg-rz9m">Nom</th>
+            <th class="tg-rz9m">Type de fermeture</th>
+            <th class="tg-rz9m">Date début</th>
+            <th class="tg-rz9m">Date fin</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var hours in Model) //pour chaque entrée
+        {
+            int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est aujourd'hui ou dans les jours qui suivent
+            @if (res == 0 || res > 0)
+            {
+                <tr>
+                    <td class="tg-baqh">@hours.BoatName</td>
+                    <td class="tg-baqh">@hours.ClosingType</td>
+                    <td class="tg-baqh">@hours.ClosingDate</td>
+                    <td class="tg-baqh">@hours.ReopeningDate</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<hr style=" margin:30px; color:darkred;" />
+<h2>Historique des précédentes fermetures :</h2>
+<hr style=" margin:30px;" />
+
+<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 13%;">
+    <colgroup>
+        <col style="width: 233px">
+        <col style="width: 216px">
+        <col style="width: 205px">
+        <col style="width: 205px">
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th style="background-color: #9DE0AD;" class="tg-rz9m">Nom</th>
+            <th style="background-color: #9DE0AD;" class="tg-rz9m">Type de fermeture</th>
+            <th style="background-color: #9DE0AD;" class="tg-rz9m">Date début</th>
+            <th style="background-color: #9DE0AD;" class="tg-rz9m">Date fin</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var hours in Model) //pour chaque entrée
+        {
+            int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est inférieur aujourd'hui
+            @if (res < 0)
+            {
+                <tr>
+                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.BoatName</td>
+                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingType</td>
+                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingDate</td>
+                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ReopeningDate</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
