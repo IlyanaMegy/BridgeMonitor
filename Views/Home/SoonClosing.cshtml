@@ -1,39 +1,102 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "SoonClosing";
 
-    string[] NextOne = new string[4];
-    @foreach (var hours in Model) //pour chaque entrée
+    string[] NextOne = new string[6];
+    DateTime ClosingStart = DateTime.Today;
+    foreach (var hours in Model) //pour chaque entrée
     {
         int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est aujourd'hui ou dans les jours qui suivent
-        @if (res == 0 || res > 0)
+        if (res == 0 || res > 0)
         {
             NextOne[0] = hours.ClosingType; //fermeture [type]
-            NextOne[1] = hours.ClosingDate.DayOfTheWeek; // le [jour de la semaine] prochain
-            
+            NextOne[1] = hours.ClosingDate.DayOfWeek.ToString(); // le [jour de la semaine] prochain
+
             string duree = hours.ClosingDate.Hour + "h" + hours.ClosingDate.Minute + " à " + hours.ReopeningDate.Hour + "h" + hours.ReopeningDate.Minute;
             NextOne[2] = duree; // de [h/min] à [h/min]
-
-            NextOne[4] = hours.BoatName; // à cause de [name]
-            NextOne[5] = hours.ClosingDate; //dans exactement compteur 
-            //creer une décompte en temps réel avec class Timer
-            // invoque un code qui affiche le temps restant toutes les secondes
-            // voir https://www.dotnetperls.com/timer
+            NextOne[3] = hours.BoatName; // à cause de [name]
 
 
+            TimeSpan span = (hours.ReopeningDate - hours.ClosingDate);
+            var diff = String.Format("{0} heures et {1} minutes", span.Hours, span.Minutes);
+            NextOne[4] = diff;
+
+            ClosingStart = hours.ClosingDate;
             break;
         }
     }
+
+    <?php
+    $heures   = 15;  // les heures < 24
+    $minutes  = 2;   // les minutes  < 60
+    $secondes = 22;  // les secondes  < 60
+
+    $annee = date("Y");  // par defaut cette année
+    $mois  = date("m");  // par defaut ce mois
+    $jour  = date("d");  // par defaut aujourd'hui
+
+    // quand le compteur arrive à 0
+    // -> refresh page
+
+    // calcul des secondes
+   
+
+    $secondes = mktime(date("H") + $heures,
+    date("i") + $minutes,
+    date("s") + $secondes,
+    $mois,
+    $jour,
+    $annee
+    ) - time();
+    ?>
+
+    <head>
+        <script type="text/javascript">
+            var temps = <? php echo $secondes;?>;
+            var timer = setInterval('CompteaRebour()', 1000);
+            function CompteaRebour() {
+
+                temps--;
+                j = parseInt(temps);
+                h = parseInt(temps / 3600);
+                m = parseInt((temps % 3600) / 60);
+                s = parseInt((temps % 3600) % 60);
+                document.getElementById('minutes').innerHTML = (h < 10 ? "0" + h : h) + '  h :  ' +
+                    (m < 10 ? "0" + m : m) + ' mn : ' +
+                    (s < 10 ? "0" + s : s) + ' s ';
+                if ((s == 0 && m == 0 && h == 0)) {
+                    clearInterval(timer);
+                    url = "<?php echo $redirection;?>"
+                    Redirection(url)
+                }
+            }
+            function Redirection(url) {
+                setTimeout("window.location=url", 500)
+            }
+        </script>
+    </head>
+
+    <body onload="timer">
+        <?php
+        // la condition est que le nombre de seconde soit etre superieur a 24 heures
+        if ($secondes <= 3600*24) {
+        ?>
+        <span style="font-size: 36px;">Il vous reste comme temps</span>
+        <div id="minutes" style="font-size: 36px;"></div>
+        <?php
+        }
+        ?>
+
+
+        <h1 style="margin-left:13%;">Fermeture prochaine...</h1>
+
+        <div style="border-radius:5%; border: solid, 1px, double; border-color:aquamarine; height: 500px; width:900px; margin:50px; margin-left:13%; margin-right:auto; background-color:lightcyan;">
+            <h2 style="text-align:center;">
+                Le pont Chaban Delmas sera en fermeture @NextOne[0] le @NextOne[1] prochain
+                <br>de @NextOne[2], pour cause de @NextOne[3].
+                <br>L'opération durera environ @NextOne[4], le risque d'embouteillage est [bool]. ...
+            </h2>
+            <hr style="margin:30px;" />
+
+        </div>
 }
-
-<h1 style="margin-left:13%;">Fermeture prochaine...</h1>
-
-var time =
-<div style="border-radius:5%; border: solid, 1px, double; border-color:aquamarine; height: 500px; width:900px; margin:50px; margin-left:13%; margin-right:auto; background-color:lightcyan;">
-    <h2 style="text-align:center;">Le pont Chaban Delmas sera en fermeture [bool] [...] prochain
-    <br>de [debut] à [fin], à cause de ce putin de [nom]
-    <br>soit pendant environ [heure] heures et [min] minutes</h2>
-    <hr style="margin:30px;"/>
-    <h2>Cette fermeture aura lieu dans [Décompte], le risque d'embouteillage est [bool].</h2>
-    
-</div>
+    </body>
