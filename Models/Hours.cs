@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace BridgeMonitor.Models
 {
     // Hours myDeserializedClass = JsonConvert.DeserializeObject<Hours>(myJsonResponse); 
     public class Hours
     {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
         [JsonProperty("boat_name")]
         public string BoatName { get; set; }
 
@@ -20,5 +24,7 @@ namespace BridgeMonitor.Models
 
         [JsonProperty("reopening_date")]
         public DateTime ReopeningDate { get; set; }
+
+        
     }
 }

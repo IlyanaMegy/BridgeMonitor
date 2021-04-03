@@ -60,10 +60,11 @@
 <h2>Liste des fermetures en cours :</h2>
 <hr style=" margin:30px;" />
 
-<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 13%;">
+<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 3%;">
     <colgroup>
         <col style="width: 233px">
         <col style="width: 216px">
+        <col style="width: 205px">
         <col style="width: 205px">
         <col style="width: 205px">
     </colgroup>
@@ -74,6 +75,7 @@
             <th class="tg-rz9m">Type de fermeture</th>
             <th class="tg-rz9m">Date début</th>
             <th class="tg-rz9m">Date fin</th>
+            <th class="tg-rz9m">Durée</th>
         </tr>
     </thead>
 
@@ -83,12 +85,41 @@
             int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est aujourd'hui ou dans les jours qui suivent
             @if (res == 0 || res > 0)
             {
-                <tr>
-                    <td class="tg-baqh">@hours.BoatName</td>
-                    <td class="tg-baqh">@hours.ClosingType</td>
-                    <td class="tg-baqh">@hours.ClosingDate</td>
-                    <td class="tg-baqh">@hours.ReopeningDate</td>
-                </tr>
+        <tr>
+            <td class="tg-baqh">@hours.BoatName</td>
+            <td class="tg-baqh">@hours.ClosingType</td>
+            <td class="tg-baqh">@hours.ClosingDate</td>
+            <td class="tg-baqh">@hours.ReopeningDate</td>
+
+            @{
+                TimeSpan span = (hours.ReopeningDate - hours.ClosingDate);
+                var diff = "durée de l'opération";
+                if (span.Hours > 1)
+                {
+                    if (span.Minutes <= 1)
+                    {
+                        diff = String.Format("{0} heures", span.Hours);
+                    }
+                    else
+                    {
+                        diff = String.Format("{0} heures et {1} minutes", span.Hours, span.Minutes);
+                    }
+                }
+                else
+                {
+                    if (span.Minutes <= 1)
+                    {
+                        diff = String.Format("{0} heure", span.Hours);
+                    }
+                    else
+                    {
+                        diff = String.Format("{0} heure et {1} minutes", span.Hours, span.Minutes);
+                    }
+                }
+
+            }
+            <td class="tg-baqh">@diff</td>
+        </tr>
             }
         }
     </tbody>
@@ -97,10 +128,11 @@
 <h2>Historique des précédentes fermetures :</h2>
 <hr style=" margin:30px;" />
 
-<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 13%;">
+<table class="tg" style="table-layout: fixed; width: 859px; margin-left : 3%;">
     <colgroup>
         <col style="width: 233px">
         <col style="width: 216px">
+        <col style="width: 205px">
         <col style="width: 205px">
         <col style="width: 205px">
     </colgroup>
@@ -111,6 +143,7 @@
             <th style="background-color: #9DE0AD;" class="tg-rz9m">Type de fermeture</th>
             <th style="background-color: #9DE0AD;" class="tg-rz9m">Date début</th>
             <th style="background-color: #9DE0AD;" class="tg-rz9m">Date fin</th>
+            <th style="background-color: #9DE0AD;" class="tg-rz9m">Durée</th>
         </tr>
     </thead>
 
@@ -120,13 +153,45 @@
             int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est inférieur aujourd'hui
             @if (res < 0)
             {
-                <tr>
-                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.BoatName</td>
-                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingType</td>
-                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingDate</td>
-                    <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ReopeningDate</td>
-                </tr>
+        <tr>
+            <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.BoatName</td>
+            <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingType</td>
+            <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ClosingDate</td>
+            <td style="background-color: #E0FFEB;" class="tg-baqh">@hours.ReopeningDate</td>
+
+            @{
+                TimeSpan span = (hours.ReopeningDate - hours.ClosingDate);
+                var diff = "durée de l'opération";
+                if (span.Hours > 1)
+                {
+                    if (span.Minutes <= 1)
+                    {
+                        diff = String.Format("{0} heures", span.Hours);
+                    }
+                    else
+                    {
+                        diff = String.Format("{0} heures et {1} minutes", span.Hours, span.Minutes);
+                    }
+                }
+                else
+                {
+                    if (span.Minutes <= 1)
+                    {
+                        diff = String.Format("{0} heure", span.Hours);
+                    }
+                    else
+                    {
+                        diff = String.Format("{0} heure et {1} minutes", span.Hours, span.Minutes);
+                    }
+                }
+
+            }
+            <td class="tg-baqh">@diff</td>
+        </tr>
             }
         }
     </tbody>
 </table>
+
+
+

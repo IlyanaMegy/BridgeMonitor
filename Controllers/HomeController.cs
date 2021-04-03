@@ -60,7 +60,6 @@ namespace BridgeMonitor.Controllers
             var result = JsonConvert.DeserializeObject<List<Hours>>(MyJsonRes);
             List<Hours> SortedList = result.OrderBy(o => o.ClosingDate).ToList();
             return SortedList;
-
         }
     }
 }

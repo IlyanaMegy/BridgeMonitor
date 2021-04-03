@@ -1,4 +1,7 @@
-﻿@{
+﻿@using System.Globalization;
+
+@{
+
     ViewData["Title"] = "SoonClosing";
 
     string[] NextOne = new string[6];
@@ -8,24 +11,68 @@
         int res = DateTime.Compare(hours.ClosingDate, DateTime.Today); // si la date de début est aujourd'hui ou dans les jours qui suivent
         if (res == 0 || res > 0)
         {
-            NextOne[0] = hours.ClosingType; //fermeture [type]
-            NextOne[1] = hours.ClosingDate.DayOfWeek.ToString(); // le [jour de la semaine] prochain
+            NextOne[0] = hours.ClosingType.ToLower(); //fermeture [type]
+            NextOne[1] = hours.ClosingDate.ToString("dddd",new CultureInfo("fr-FR")); // le [jour de la semaine] prochain
 
-            string duree = hours.ClosingDate.Hour + "h" + hours.ClosingDate.Minute + " à " + hours.ReopeningDate.Hour + "h" + hours.ReopeningDate.Minute;
+            string duree = "intervalle";
+
+            if (hours.ClosingDate.Minute <= 1 && hours.ReopeningDate.Minute <= 1)
+            {
+                duree = hours.ClosingDate.Hour + "h"+ " à " + hours.ReopeningDate.Hour + "h";
+            }
+            else if (hours.ClosingDate.Minute <= 1)
+            {
+                duree = hours.ClosingDate.Hour + "h" + " à " + hours.ReopeningDate.Hour + "h" + hours.ReopeningDate.Minute;
+            }
+            else if (hours.ReopeningDate.Minute <= 1)
+            {
+                duree = hours.ClosingDate.Hour + "h" + hours.ClosingDate.Minute + " à " + hours.ReopeningDate.Hour + "h";
+            }
+            else
+            {
+                duree = hours.ClosingDate.Hour + "h" + hours.ClosingDate.Minute + " à " + hours.ReopeningDate.Hour + "h" + hours.ReopeningDate.Minute;
+            }
+        
+
             NextOne[2] = duree; // de [h/min] à [h/min]
             NextOne[3] = hours.BoatName; // à cause de [name]
 
 
             TimeSpan span = (hours.ReopeningDate - hours.ClosingDate);
-            var diff = String.Format("{0} heures et {1} minutes", span.Hours, span.Minutes);
+            var diff = "durée de l'opération";
+            if (span.Hours > 1)
+            {
+                if (span.Minutes <= 1)
+                {
+                    diff = String.Format("{0} heures", span.Hours);
+                }
+                else
+                {
+                    diff = String.Format("{0} heures et {1} minutes", span.Hours, span.Minutes);
+                }
+            }
+            else
+            {
+                if (span.Minutes <= 1)
+                {
+                    diff = String.Format("{0} heure", span.Hours);
+                }
+                else
+                {
+                    diff = String.Format("{0} heure et {1} minutes", span.Hours, span.Minutes);
+                }
+            }
             NextOne[4] = diff;
+
+            if (hours.ClosingDate.Hour >= 9 && hours.ClosingDate.Hour <= 17) { NextOne[5] = "élevé"; }
+            else { NextOne[5] = "faible"; }
 
             ClosingStart = hours.ClosingDate;
             break;
         }
     }
 
-    <?php
+    @*<?php
     $heures   = 15;  // les heures < 24
     $minutes  = 2;   // les minutes  < 60
     $secondes = 22;  // les secondes  < 60
@@ -38,7 +85,7 @@
     // -> refresh page
 
     // calcul des secondes
-   
+
 
     $secondes = mktime(date("H") + $heures,
     date("i") + $minutes,
@@ -84,19 +131,19 @@
         <div id="minutes" style="font-size: 36px;"></div>
         <?php
         }
-        ?>
+        ?>*@
 
 
         <h1 style="margin-left:13%;">Fermeture prochaine...</h1>
 
-        <div style="border-radius:5%; border: solid, 1px, double; border-color:aquamarine; height: 500px; width:900px; margin:50px; margin-left:13%; margin-right:auto; background-color:lightcyan;">
-            <h2 style="text-align:center;">
-                Le pont Chaban Delmas sera en fermeture @NextOne[0] le @NextOne[1] prochain
-                <br>de @NextOne[2], pour cause de @NextOne[3].
-                <br>L'opération durera environ @NextOne[4], le risque d'embouteillage est [bool]. ...
-            </h2>
-            <hr style="margin:30px;" />
+        <div style="padding-top: 80px; border-radius: 5%; border: solid, 1px, double; border-color: aquamarine; height: 300px; width: 900px; margin: 50px; margin-left: 13%; margin-right: auto; background-color: lightcyan;">
+            <p style="text-align:center; font-size:x-large;">
+                Le pont Chaban Delmas sera en fermeture <b>@NextOne[0]</b> 
+                <br/>le <b> @NextOne[1] </b>prochain de @NextOne[2] pour cause de <b>@NextOne[3]</b>.
+                <br/>L'opération durera environ @NextOne[4], le risque d'embouteillage est<b> @NextOne[5]</b>.
+            </p>
 
         </div>
-}
-    </body>
+        }
+    @*</body>*@
+
